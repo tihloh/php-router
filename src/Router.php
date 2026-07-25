@@ -4,24 +4,34 @@ namespace Tihloh\PhpRouter;
 class Router
 {
     protected string $basePath;
+    protected string $rootPath;
     protected string $viewPath;
-
+    protected string $apiPath;
     public string $page;
     public array $params = [];
     public bool $isApi = false;
 
     public string $method;
 
-    public function __construct(string $basePath = '', string $viewPath = __DIR__ . '/../views')
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        $this->method = $_SERVER['REQUEST_METHOD'];
-
+    public function __construct(
+        string $basePath = '',
+        ?string $rootPath = null,
+        ?string $viewPath = null,
+        ?string $apiPath = null
+    ) {
         $this->basePath = rtrim($basePath, '/');
-        $this->viewPath = rtrim($viewPath, '/');
+
+        // Default:
+        // DOCUMENT_ROOT is the application root.
+        $this->rootPath = $rootPath
+            ? rtrim($rootPath, '/')
+            : $_SERVER['DOCUMENT_ROOT'];
+
+        $this->viewPath = $viewPath
+            ?? $this->rootPath . '/views';
+
+        $this->apiPath = $apiPath
+            ?? $this->rootPath . '/api';
 
         $this->resolve();
     }
@@ -47,7 +57,7 @@ class Router
         if (isset($parts[0]) && $parts[0] === 'api') {
             $this->isApi = true;
             array_shift($parts);
-            $this->viewPath = __DIR__ . '/../api';
+            $this->viewPath = $this->apiPath;
         }
 
         $this->page = $this->viewPath . '/home.php';
@@ -93,7 +103,7 @@ class Router
 
     public function redirect(string $url = ''): never
     {
-        header( 'Location: ' . $this->url($url) );
+        header('Location: ' . $this->url($url));
         exit;
     }
 
@@ -110,5 +120,5 @@ class Router
         echo json_encode($data);
         exit;
     }
-    
+
 }
