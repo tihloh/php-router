@@ -1,0 +1,14 @@
+{
+    "name": "tihloh/php-router",
+    "description": "A lightweight PHP routing library.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Tihloh\\Router\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.0"
+    }
+}
