@@ -1,4 +1,5 @@
 <?php
+namespace Tihloh\PhpRouter;
 
 class Router
 {
